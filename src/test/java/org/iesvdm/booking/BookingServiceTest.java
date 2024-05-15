@@ -8,7 +8,9 @@ import org.mockito.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,6 +67,15 @@ public class BookingServiceTest {
     @Test
     void getAvailablePlaceCountTest() {
 
+        ArrayList<Room> habitaciones = new ArrayList<Room>();
+
+        habitaciones.add(new Room("1", 3));
+        habitaciones.add(new Room("2", 3));
+        habitaciones.add(new Room("3", 4));
+
+        when(roomService.getAvailableRooms()).thenReturn(habitaciones);
+
+       assertThat(bookingService.getAvailablePlaceCount()).isEqualTo(10);
     }
 
     /**
@@ -76,6 +87,13 @@ public class BookingServiceTest {
      @Test
     void calculatePriceTest() {
 
+         double precio = bookingService.calculatePrice(bookingRequest1);
+
+         verify(bookingRequest1).getDateFrom();
+         verify(bookingRequest1).getDateTo();
+         verify(bookingRequest1).getGuestCount();
+
+         assertThat(precio).isEqualTo((ChronoUnit.DAYS.between(bookingRequest1.getDateFrom(), bookingRequest1.getDateTo()) * 50 * bookingRequest1.getGuestCount()));
      }
 
 
